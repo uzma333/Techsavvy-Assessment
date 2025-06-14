@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { formatValue, getRGBColor } from "../../utils/formatUtils";
-import api from "../../services/apiservice";
+import { formatValue, getRGBColor } from "../utils/formatUtils";
+import api from "../services/apiservice";
 import { format } from "date-fns";
 
 // Time slots and day names

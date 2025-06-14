@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar/Sidebar";
-import TopBar from "../components/Topbar/Topbar";
-import LineChartContainer from "../components/LineChart/LineChart";
-import HeatMap from "../components/HeatMap/HeatMap";
+import Sidebar from "../components/Sidebar";
+import TopBar from "../components/Topbar";
+import LineChartContainer from "../components/LineChart";
+import HeatMap from "../components/HeatMap";
 import { useAuth } from "../context/Authcontext";
-import DatePicker from "../components/DatePicker/DatePicker";
+import DatePicker from "../components/DatePicker";
 import { subDays } from "date-fns";
 
 const Dashboard = () => {

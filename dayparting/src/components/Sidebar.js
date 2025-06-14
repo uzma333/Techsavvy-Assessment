@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { FiGrid, FiLogOut } from "react-icons/fi";
 import { useState } from "react";
-import techsavvyimag from "../../assets/techsavvyimg.jpg"
+import techsavvyimag from "../assets/techsavvyimg.jpg"
 
 const Sidebar = ({ onLogout }) => {
   const [isHovered, setIsHovered] = useState(false);

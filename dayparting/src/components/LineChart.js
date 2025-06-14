@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import api from "../../services/apiservice";
+import api from "../services/apiservice";
 import {
   LineChart as ReLineChart,
   Line,
@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import Dropdown from "../Dropdown/Dropdown";
+import Dropdown from "./Dropdown";
 import { FiRefreshCcw } from "react-icons/fi";
 import { format } from "date-fns";
 
