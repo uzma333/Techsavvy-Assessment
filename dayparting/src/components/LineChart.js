@@ -111,6 +111,14 @@ const LineChartContainer = ({ selectedMetrics, setSelectedMetrics }) => {
 				}
 			);
 
+       const result = res.data?.result;
+
+    if (!result || !result.categories || !result.series) {
+      setError('Invalid data format from API');
+      setData([]);
+      return;
+    }
+
 			const { categories, series } = res.data.result;
 
 			const formatted = categories.map((time, idx) => {

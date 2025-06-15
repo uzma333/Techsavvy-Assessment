@@ -14,6 +14,7 @@ import api from '../services/apiservice';
 const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [tempSelection, setTempSelection] = useState([]);
 	const [error, setError] = useState(null);
 	const [retry, setRetry] = useState(false);
 
@@ -32,6 +33,9 @@ const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 			setSelectedMetrics(
 				res.data.result.slice(0, 5).map((metric) => metric.code)
 			);
+			setTempSelection(
+				res.data.result.slice(0, 5).map((metric) => metric.code)
+			);
 		} catch (err) {
 			console.error('Error fetching filter list:', err);
 			setError('Failed to fetch filter list');
@@ -46,7 +50,7 @@ const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 	}, [fetchData, retry]);
 
 	const handleCheckboxChange = (metricCode) => {
-		setSelectedMetrics((prev) => {
+		setTempSelection((prev) => {
 			if (prev.includes(metricCode)) {
 				// If already selected, remove it
 				return prev.filter((code) => code !== metricCode);
@@ -56,6 +60,15 @@ const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 			}
 		});
 	};
+	 const handleApply = (close) => {
+    setSelectedMetrics(tempSelection);
+    close();
+  };
+
+  const handleCancel = (close) => {
+    setTempSelection(selectedMetrics); // reset to last applied
+    close();
+  };
 
 	if (isLoading) {
 		return <TbLoader2 className='text-primary-100 animate-spin size-4' />;
@@ -99,7 +112,7 @@ const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 										<label className='flex items-center gap-2 cursor-pointer text-xs hover:bg-gray-100 p-1 rounded'>
 											<input
 												type='checkbox'
-												checked={selectedMetrics.includes(
+												checked={tempSelection.includes(
 													metric.code
 												)}
 												onChange={() =>
@@ -114,6 +127,20 @@ const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
 									</MenuItem>
 								))}
 							</div>
+							<div className="flex justify-between px-3 py-2 border-t">
+                <button
+                  className="text-xs text-gray-500 hover:text-black"
+                  onClick={() => handleCancel(close)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="text-xs text-blue-600 font-medium hover:text-blue-800"
+                  onClick={() => handleApply(close)}
+                >
+                  Apply
+                </button>
+              </div>
 						</MenuItems>
 					</Transition>
 				</>
