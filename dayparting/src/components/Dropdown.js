@@ -1,117 +1,125 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import api from "../services/apiservice";
+import { useCallback, useEffect, useState, Fragment } from 'react';
+import {
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuItems,
+	Transition,
+} from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/solid';
+import { TbLoader2 } from 'react-icons/tb';
+import { FiRefreshCcw } from 'react-icons/fi';
+import api from '../services/apiservice';
 
 const Dropdown = ({ selectedMetrics, setSelectedMetrics }) => {
-  const [tempSelected, setTempSelected] = useState(selectedMetrics);
-  const [metricsList, setMetricsList] = useState([]);
-  const [loading, setLoading] = useState(true);
+	const [data, setData] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const [retry, setRetry] = useState(false);
 
-  useEffect(() => {
-    setTempSelected(selectedMetrics);
-  }, [selectedMetrics]);
+	const fetchData = useCallback(async () => {
+		try {
+			setIsLoading(true);
+			setError(null);
 
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        setLoading(true);
-        const res = await api.post("/day-parting/DayPartingFilterList", {
-          type: "customizeMetrics",
-        });
-        setMetricsList(res.data.result || []);
-        console.log(res.data.result)
-      } catch (err) {
-        console.error("Failed to fetch metric list:", err);
-        setMetricsList([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMetrics();
-  }, []);
+			const res = await api.post('/day-parting/DayPartingFilterList', {
+				type: 'customizeMetrics',
+			});
 
-  const toggleMetric = (metric) => {
-    setTempSelected((prev) =>
-      prev.includes(metric) ? prev.filter((m) => m !== metric) : [...prev, metric]
-    );
-  };
+			setData(res.data.result);
 
-  const handleApply = (close) => {
-    setSelectedMetrics(tempSelected);
-    close();
-  };
+			// Set initial selected metrics to the first 5 fetched metrics
+			setSelectedMetrics(
+				res.data.result.slice(0, 5).map((metric) => metric.code)
+			);
+		} catch (err) {
+			console.error('Error fetching filter list:', err);
+			setError('Failed to fetch filter list');
+		} finally {
+			setIsLoading(false);
+		}
+	}, [setSelectedMetrics]);
 
-  const handleCancel = (close) => {
-    setTempSelected(selectedMetrics);
-    close();
-  };
+	useEffect(() => {
+		fetchData();
+		setRetry(false);
+	}, [fetchData, retry]);
 
-  return (
-    <div className="flex justify-end">
-      <Menu as="div" className="relative inline-block text-left">
-        {({ close }) => (
-          <>
-            <Menu.Button className="inline-flex justify-center items-center w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
-              Select Metrics
-              <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" />
-            </Menu.Button>
+	const handleCheckboxChange = (metricCode) => {
+		setSelectedMetrics((prev) => {
+			if (prev.includes(metricCode)) {
+				// If already selected, remove it
+				return prev.filter((code) => code !== metricCode);
+			} else {
+				// If not selected, add it
+				return [...prev, metricCode];
+			}
+		});
+	};
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div className="p-3 space-y-2 max-h-64 overflow-auto">
-                  {loading ? (
-                    <div className="text-sm text-gray-400 text-center">Loading...</div>
-                  ) : metricsList.length === 0 ? (
-                    <div className="text-sm text-red-500 text-center">No metrics found</div>
-                  ) : (
-                    metricsList.map((metric) => (
-                      <Menu.Item key={metric}>
-                        {() => (
-                          <label className="flex items-center gap-2 cursor-pointer text-sm hover:bg-gray-100 p-1 rounded">
-                            <input
-                              type="checkbox"
-                              checked={tempSelected.includes(metric)}
-                              onChange={() => toggleMetric(metric)}
-                              className="accent-blue-500"
-                            />
-                            {metric}
-                          </label>
-                        )}
-                      </Menu.Item>
-                    ))
-                  )}
+	if (isLoading) {
+		return <TbLoader2 className='text-primary-100 animate-spin size-4' />;
+	}
 
-                  <div className="flex justify-between gap-2 pt-2 border-t border-gray-200">
-                    <button
-                      onClick={() => handleCancel(close)}
-                      className="w-1/2 py-1 text-sm text-gray-500 border border-gray-300 rounded hover:bg-gray-100"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handleApply(close)}
-                      className="w-1/2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </>
-        )}
-      </Menu>
-    </div>
-  );
+	if (error) {
+		return (
+			<div className='rounded-full px-4 py-2 flex items-center gap-2 text-xs text-red-500 bg-red-50'>
+				{error}
+				<button
+					type='button'
+					title='Retry'
+					onClick={() => setRetry(true)}>
+					<FiRefreshCcw className='size-3' />
+				</button>
+			</div>
+		);
+	}
+
+	return (
+		<Menu as='div' className='relative inline-block text-left'>
+			{({ close }) => (
+				<>
+					<MenuButton className='flex justify-center items-center w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-xs text-slate-500 shadow-sm hover:bg-gray-50 gap-2'>
+						Select Metrics
+						<ChevronDownIcon className='size-4' />
+					</MenuButton>
+
+					<Transition
+						as={Fragment}
+						enter='transition ease-out duration-100'
+						enterFrom='transform opacity-0 scale-95'
+						enterTo='transform opacity-100 scale-100'
+						leave='transition ease-in duration-75'
+						leaveFrom='transform opacity-100 scale-100'
+						leaveTo='transform opacity-0 scale-95'>
+						<MenuItems className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+							<div className='p-3 space-y-2'>
+								{data.map((metric) => (
+									<MenuItem as='div' key={metric.code}>
+										<label className='flex items-center gap-2 cursor-pointer text-xs hover:bg-gray-100 p-1 rounded'>
+											<input
+												type='checkbox'
+												checked={selectedMetrics.includes(
+													metric.code
+												)}
+												onChange={() =>
+													handleCheckboxChange(
+														metric.code
+													)
+												}
+												className='accent-primary-100'
+											/>
+											{metric.label}
+										</label>
+									</MenuItem>
+								))}
+							</div>
+						</MenuItems>
+					</Transition>
+				</>
+			)}
+		</Menu>
+	);
 };
 
 export default Dropdown;

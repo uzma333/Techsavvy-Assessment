@@ -1,18 +1,5 @@
 import axios from 'axios';
-
-const getAuthHeader = () => {
-  const user = JSON.parse(localStorage.getItem('user') ?? "{}")
-  const token = user.token
-  if (!token) return '';
-  return `Bearer ${token}`
-}
-
-const getUserIdentity = () => {
-  const user = JSON.parse(localStorage.getItem('user') ?? "{}")
-  const identity = user.identity;
-  if (!identity) return '';
-  return identity;
-}
+import { getAuthHeader, getUserIdentity } from '../utils/localStorage';
 
 const api = axios.create({
   baseURL: 'https://coreapi.hectorai.live/api',
