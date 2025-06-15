@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 
-const TopBar = ({ onLogout, sidebarVisible, setSidebarVisible }) => {
+const TopBar = ({ onLogout }) => {
+  const[sidebarVisible, setSidebarVisible]=useState()
   return (
     <header className="w-full bg-white shadow flex items-center justify-between px-6 py-3">
       {/* Toggle button for small screens */}

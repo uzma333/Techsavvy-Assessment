@@ -14,18 +14,7 @@ import Dropdown from "./Dropdown";
 import { FiRefreshCcw } from "react-icons/fi";
 import { format } from "date-fns";
 
-// Mock Data
-const MOCK_DATA = [
-  { date: "0 Hr", Spend: 1500, Revenue: 2200, Clicks: 100, CPM: 60, CTR: 0.08, CPC: 12 },
-   { date: "2 Hr", Spend: 1800, Revenue: 2400, Clicks: 110, CPM: 65, CTR: 0.10, CPC: 11 },
-   { date: "4 Hr", Spend: 1400, Revenue: 2100, Clicks: 90, CPM: 55, CTR: 0.07, CPC: 10 },
-   { date: "6 Hr", Spend: 1700, Revenue: 2300, Clicks: 105, CPM: 62, CTR: 0.09, CPC: 11 },
-   { date: "8 Hr", Spend: 1600, Revenue: 2000, Clicks: 95, CPM: 58, CTR: 0.11, CPC: 9 },
-   { date: "10 Hr", Spend: 1900, Revenue: 2500, Clicks: 120, CPM: 70, CTR: 0.12, CPC: 10 },
-   { date: "12 Hr", Spend: 1300, Revenue: 1800, Clicks: 85, CPM: 50, CTR: 0.06, CPC: 8 },
- ];
-
-//  Chart Renderer
+// Chart Renderer
 const LineChart = ({ isLoading, data, selectedMetrics, error, setRetry }) => {
   if (error) {
     return (
@@ -81,8 +70,8 @@ const LineChart = ({ isLoading, data, selectedMetrics, error, setRetry }) => {
   );
 };
 
-// Container with logic
-const LineChartContainer = ({ startDate, endDate, useMockData }) => {
+// Container
+const LineChartContainer = ({ startDate, endDate }) => {
   const [data, setData] = useState([]);
   const [selectedMetrics, setSelectedMetrics] = useState(["CPC"]);
   const [isLoading, setIsLoading] = useState(false);
@@ -94,25 +83,20 @@ const LineChartContainer = ({ startDate, endDate, useMockData }) => {
       setIsLoading(true);
       setError(null);
 
-      if (useMockData) {
-        setData(MOCK_DATA);
-        return;
-      }
-
       const res = await api.post("/day-parting/DayPartingPerformanceGraphList", {
         startDate: format(startDate, "yyyy-MM-dd"),
         endDate: format(endDate, "yyyy-MM-dd"),
         metrics: selectedMetrics,
       });
 
-      setData(res.data.result);
+      setData(res.data.result || []);
     } catch (err) {
       console.error("Error fetching performance chart:", err);
-      setError("Failed to fetch performance graph list");
+      setError("Failed to fetch performance graph data.");
     } finally {
       setIsLoading(false);
     }
-  }, [useMockData, selectedMetrics, startDate, endDate]);
+  }, [selectedMetrics, startDate, endDate]);
 
   useEffect(() => {
     fetchData();
