@@ -86,9 +86,8 @@ const LineChart = ({ isLoading, data, selectedMetrics, error, setRetry }) => {
 };
 
 // Container with logic
-const LineChartContainer = () => {
+const LineChartContainer = ({ selectedMetrics, setSelectedMetrics }) => {
 	const [data, setData] = useState([]);
-	const [selectedMetrics, setSelectedMetrics] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [retry, setRetry] = useState(false);
@@ -126,7 +125,7 @@ const LineChartContainer = () => {
 			setData(formatted);
 		} catch (err) {
 			console.error('Error fetching performance chart:', err);
-			setError('Failed to fetch performance graph list');
+			setError('Failed to fetch performance chart');
 		} finally {
 			setIsLoading(false);
 		}

@@ -1,7 +1,6 @@
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/Topbar';
-import LineChartContainer from '../components/LineChart';
-import HeatMap from '../components/HeatMap';
+import VisualizationArea from '../components/VisualizationArea';
 
 const Dashboard = () => {
 	return (
@@ -12,8 +11,7 @@ const Dashboard = () => {
 				<TopBar />
 
 				<main className='p-6 space-y-6 w-full'>
-					<LineChartContainer />
-					<HeatMap />
+					<VisualizationArea />
 				</main>
 			</div>
 		</div>
