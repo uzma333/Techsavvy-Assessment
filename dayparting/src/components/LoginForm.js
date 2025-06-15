@@ -61,7 +61,7 @@ const LoginForm = () => {
 			navigate('/dashboard');
 		} catch (err) {
 			console.error('Login Error:', err);
-			setError('Invalid credentials!');
+			setError('Login failed! Please check the console for details.');
 		} finally {
 			setIsLoading(false); // Reset loading state
 		}
@@ -125,7 +125,7 @@ const LoginForm = () => {
 			<button
 				type='submit'
 				disabled={isLoading}
-				className='w-full uppercase text-white bg-primary hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-100 focus:ring-offset-2 rounded-lg py-3 text-sm font-semibold transition-colors duration-500'>
+				className='w-full uppercase text-white disabled:bg-slate-500 bg-primary hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-100 focus:ring-offset-2 rounded-lg py-3 text-sm font-semibold transition-colors duration-500'>
 				{isLoading ? (
 					<FiLoader className='mx-auto animate-spin' />
 				) : (

@@ -10,6 +10,7 @@ import { subDays } from "date-fns";
 const Dashboard = () => {
   const { logout } = useAuth();
   const [useMockData, setUseMockData] = useState(true);
+  
   const [{ startDate, endDate }, setDate] = useState({
     startDate: new Date(subDays(Date.now(), 7)),
     endDate: new Date(),
@@ -17,7 +18,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-slate-200 text-black">
-      <Sidebar onLogout={logout} />
+      <Sidebar />
 
       <div className="flex flex-col flex-1 overflow-auto">
         <TopBar onLogout={logout} />
