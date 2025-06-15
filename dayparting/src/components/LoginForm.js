@@ -33,8 +33,6 @@ const LoginForm = () => {
 				isLoggedInHere: 0,
 			});
 
-			console.debug('Login API Response:', res.data); //for debug purpose
-
 			const reactAppIdentity = process.env.REACT_APP_IDENTITY;
 
 			if (!reactAppIdentity) {
@@ -52,7 +50,7 @@ const LoginForm = () => {
 			}
 
 			const userData = {
-				email: res.data.userDetails.email,
+				fullName: res.data.userDetails.fullName,
 				token,
 				identity,
 			};
